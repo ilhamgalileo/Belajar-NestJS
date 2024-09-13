@@ -1,16 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Todo } from '../todo/todo.entity';
 
 @Entity()
-export class User{
+export class User {
     @PrimaryGeneratedColumn()
-    id:number
+    id: number;
 
-    @Column({unique: true})
-    username: string
-
-    @Column()
-    password: string
+    @Column({ unique: true })
+    username: string;
 
     @Column()
-    email: string
+    password: string;
+
+    @OneToMany(() => Todo, todo => todo.user)
+    todos: Todo[];
 }

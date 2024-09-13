@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Request } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { Todo } from './todo.entity';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
@@ -9,33 +9,42 @@ export class TodoController {
     constructor(private readonly todoService: TodoService) { }
 
     @Post()
-    create(@Body() body: {
+    create(@Request() req, @Body() body: {
         title: string
         description: string
     }): Promise<Todo> {
-        return this.todoService.create(body)
+        const userId = req.user.id;
+        return this.todoService.create({ ...body, userId });
     }
 
     @Get()
-    findAll(): Promise<Todo[]> {
-        return this.todoService.findAll()
+    findAll(@Request() req): Promise<Todo[]> {
+        const userId = req.user.id;
+        return this.todoService.findAll(userId);
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string): Promise<Todo> {
-        return this.todoService.findOne(+id)
+    findOne(@Request() req, @Param('id') id: string): Promise<Todo> {
+        const userId = req.user.id;
+        return this.todoService.findOne(+id, userId);
     }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() body: Partial<{
-        title: string
-        description: string
-    }>): Promise<Todo> {
-        return this.todoService.update(+id, body)
+    update(
+        @Request() req,
+        @Param('id') id: string,
+        @Body() body: Partial<{
+            title: string
+            description: string
+        }>
+    ): Promise<Todo> {
+        const userId = req.user.id;
+        return this.todoService.update(+id, body, userId);
     }
 
     @Delete(':id')
-    remove(@Param('id') id: string): Promise<void> {
-        return this.todoService.remove(+id)
+    remove(@Request() req, @Param('id') id: string): Promise<void> {
+        const userId = req.user.id;
+        return this.todoService.remove(+id, userId);
     }
 }
