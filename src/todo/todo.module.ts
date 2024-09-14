@@ -10,7 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Todo]),
-    AuthModule,JwtModule // Tambahkan AuthModule
+    AuthModule,JwtModule
   ],
   providers: [TodoService],
   controllers: [TodoController],

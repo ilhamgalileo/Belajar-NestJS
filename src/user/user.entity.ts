@@ -4,14 +4,14 @@ import { Todo } from '../todo/todo.entity';
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
-    id: number;
+    id: number
 
     @Column({ unique: true })
-    username: string;
+    username: string
 
     @Column()
-    password: string;
+    password: string
 
     @OneToMany(() => Todo, todo => todo.user)
-    todos: Todo[];
+    todos: Todo[]
 }

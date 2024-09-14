@@ -1,33 +1,19 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
-export class JwtAuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
-
-  async canActivate(
-    context: ExecutionContext,
-  ): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
-    
-    if (!token) {
-      return false;
-    }
-
-    try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_SECRET, // Atur secret dari env
-      });
-      request.user = payload; // Tambahkan user ke request untuk akses di handler
-      return true;
-    } catch (error) {
-      return false; // Jika token tidak valid
-    }
+export class JwtAuthGuard extends AuthGuard('jwt') {
+  canActivate(context: ExecutionContext) {
+    console.log('JwtAuthGuard: Checking authentication');
+    return super.canActivate(context)
   }
 
-  private extractTokenFromHeader(request: any): string | null {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : null;
+  handleRequest(err, user, info) {
+    console.log('JwtAuthGuard: Handling request', { err, user, info });
+    if (err || !user) {
+      console.log('JwtAuthGuard: Authentication failed');
+      throw err || new UnauthorizedException();
+    }
+    return user
   }
 }

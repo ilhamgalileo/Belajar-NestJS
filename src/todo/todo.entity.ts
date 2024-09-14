@@ -9,12 +9,18 @@ export class Todo {
     @Column()
     title: string;
 
-    @Column()
+    @Column('text')
     description: string;
 
-    @Column()
-    userId: number;
+    @ManyToOne(() => User, (user) => user.todos) // Relasi dengan User
+    user: User; // User yang memiliki todo
 
-    @ManyToOne(() => User, user => user.todos)
-    user: User;
+    @Column()
+    userId: number; // Foreign key untuk user
+
+    @Column({ default: () => 'CURRENT_TIMESTAMP' })
+    createdAt: Date;
+
+    @Column({ nullable: true, type: 'timestamp' })
+    updatedAt: Date;
 }

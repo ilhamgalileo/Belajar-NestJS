@@ -12,26 +12,26 @@ export class TodoService {
     ) {}
 
     create(createTodoDto: { title: string; description: string; userId: number }): Promise<Todo> {
-        const todo = this.todoRepository.create(createTodoDto);
-        return this.todoRepository.save(todo);
+        const todo = this.todoRepository.create(createTodoDto)
+        return this.todoRepository.save(todo)
     }
 
     findAll(userId: number): Promise<Todo[]> {
-        return this.todoRepository.find({ where: { userId } });
+        return this.todoRepository.find({ where: { userId } })
     }
 
     async findOne(id: number, userId: number): Promise<Todo> {
-        const todo = await this.todoRepository.findOne({ where: { id, userId } });
+        const todo = await this.todoRepository.findOne({ where: { id, userId } })
         if (!todo) {
-            throw new NotFoundException(`Todo with ID "${id}" not found`);
+            throw new NotFoundException(`Todo with ID "${id}" not found`)
         }
-        return todo;
+        return todo
     }
 
     async update(id: number, updateTodoDto: Partial<Todo>, userId: number): Promise<Todo> {
-        await this.findOne(id, userId);
+        await this.findOne(id, userId)
         await this.todoRepository.update({ id, userId }, updateTodoDto);
-        return this.findOne(id, userId);
+        return this.findOne(id, userId)
     }
 
     async remove(id: number, userId: number): Promise<void> {
